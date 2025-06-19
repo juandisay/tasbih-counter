@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Tasbih Counter",
+    "slug": "tasbih-counter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f5f3ff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tasbihcounter.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#f5f3ff"
+      },
+      "package": "com.tasbihcounter.app"
+    },
+    "owner": "juandisau",
+    "extra": {
+      "eas": {
+        "projectId": "b10fb210-afef-4024-ab28-8caa7dffe26e"
+      }
+    }
+  }
+}
