@@ -1,83 +1,74 @@
 # Tasbih Counter
 
-A React Native Expo application for tracking and counting tasks or prayers.
+A React Native Expo app for counting tasbih (prayer beads).
 
 ## Features
 
-- Create and manage multiple counters with target counts
-- Track progress with visual indicators
-- Reorder counters to prioritize tasks
+- Add, edit, and delete tasbih counters
+- Reorder counters with drag and drop
+- Full screen mode for better visibility
 - Persistent storage using AsyncStorage
-- Mobile-optimized UI for easy counting
+- Beautiful and intuitive UI
 
-## Getting Started
+## Development
 
 ### Prerequisites
 
-- Node.js (v14 or newer)
-- npm or yarn
+- Node.js 18 or higher
 - Expo CLI
 - Android Studio (for Android development)
+- Xcode (for iOS development, Mac only)
 
-### Installation
+### Setup
 
 1. Clone the repository
-2. Navigate to the project directory:
-   ```
-   cd tasbih-counter
-   ```
-3. Install dependencies:
-   ```
-   npm install
-   ```
+2. Install dependencies:
 
-### Running the App
-
-#### Development
-
-To run the app in development mode:
-
+```bash
+npm install
 ```
+
+3. Start the development server:
+
+```bash
 npm start
 ```
 
-This will start the Expo development server. You can then:
-- Press 'a' to run on Android Emulator
-- Press 'i' to run on iOS Simulator (Mac only)
-- Scan the QR code with the Expo Go app on your physical device
+## Building for Android
 
-#### Android Build
+### Option 1: Using Expo EAS Build (Cloud)
 
-To build an APK for Android:
+```bash
+npm run build:android
+```
 
-1. Install EAS CLI if you haven't already:
-   ```
-   npm install -g eas-cli
-   ```
+### Option 2: Local Build
 
-2. Log in to your Expo account:
-   ```
-   eas login
-   ```
+Make sure you have Android SDK and Java 11 installed, then run:
 
-3. Configure the build:
-   ```
-   eas build:configure
-   ```
+```bash
+cd android
+./gradlew assembleRelease
+```
 
-4. Build for Android:
-   ```
-   eas build -p android --profile preview
-   ```
+The APK will be available at `android/app/build/outputs/apk/release/app-release.apk`
 
-This will create an APK file that can be installed on Android devices.
+### Option 3: Docker Build
+
+If you don't have the Android SDK set up, you can use Docker to build the APK:
+
+```bash
+./build-android-docker.sh
+```
+
+This will create a Docker container with all the necessary tools and build the APK.
+
+## Signing the APK
+
+The app is configured to use the `tasbih-keystore.jks` keystore file for signing the release APK. The keystore credentials are stored in `gradle.properties`.
 
 ## Project Structure
 
 - `/components` - React components
 - `/models` - TypeScript interfaces and types
-- `/assets` - Images and other static assets
-
-## License
-
-This project is licensed under the MIT License. 
+- `/assets`
