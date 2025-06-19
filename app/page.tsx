@@ -64,6 +64,38 @@ export default function HomePage() {
     setSelectedTodo(todo)
   }
 
+  // Move todo up one position
+  const moveTodoUp = (id: string) => {
+    setTodos((prev) => {
+      const index = prev.findIndex(todo => todo.id === id)
+      if (index <= 0) return prev // Already at the top or not found
+      
+      const newArray = [...prev]
+      // Swap with the previous item
+      const temp = newArray[index]
+      newArray[index] = newArray[index - 1]
+      newArray[index - 1] = temp
+      
+      return newArray
+    })
+  }
+
+  // Move todo down one position
+  const moveTodoDown = (id: string) => {
+    setTodos((prev) => {
+      const index = prev.findIndex(todo => todo.id === id)
+      if (index === -1 || index === prev.length - 1) return prev // Not found or already at the bottom
+      
+      const newArray = [...prev]
+      // Swap with the next item
+      const temp = newArray[index]
+      newArray[index] = newArray[index + 1]
+      newArray[index + 1] = temp
+      
+      return newArray
+    })
+  }
+
   // Keep selectedTodo in sync with todos array
   useEffect(() => {
     if (selectedTodo) {
@@ -94,7 +126,14 @@ export default function HomePage() {
           {/* Todo List - Full width on mobile, left column on desktop */}
           <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
             <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Your Todos</h2>
-            <TodoList todos={todos} selectedTodo={selectedTodo} onSelectTodo={selectTodo} onDeleteTodo={deleteTodo} />
+            <TodoList 
+              todos={todos} 
+              selectedTodo={selectedTodo} 
+              onSelectTodo={selectTodo} 
+              onDeleteTodo={deleteTodo}
+              onMoveUp={moveTodoUp}
+              onMoveDown={moveTodoDown}
+            />
           </div>
 
           {/* Counter Section - Full width on mobile, right column on desktop */}

@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Trash2, Target } from "lucide-react"
+import { Trash2, Target, ChevronUp, ChevronDown } from "lucide-react"
 import type { Todo } from "@/app/page"
 
 interface TodoListProps {
@@ -9,9 +9,18 @@ interface TodoListProps {
   selectedTodo: Todo | null
   onSelectTodo: (todo: Todo) => void
   onDeleteTodo: (id: string) => void
+  onMoveUp: (id: string) => void
+  onMoveDown: (id: string) => void
 }
 
-export default function TodoList({ todos, selectedTodo, onSelectTodo, onDeleteTodo }: TodoListProps) {
+export default function TodoList({ 
+  todos, 
+  selectedTodo, 
+  onSelectTodo, 
+  onDeleteTodo, 
+  onMoveUp, 
+  onMoveDown 
+}: TodoListProps) {
   if (todos.length === 0) {
     return (
       <div className="text-center text-gray-500 py-6 sm:py-8">
@@ -24,10 +33,12 @@ export default function TodoList({ todos, selectedTodo, onSelectTodo, onDeleteTo
 
   return (
     <div className="space-y-3 max-h-64 sm:max-h-96 overflow-y-auto">
-      {todos.map((todo) => {
+      {todos.map((todo, index) => {
         const progressPercentage = Math.min((todo.currentCount / todo.targetCount) * 100, 100)
         const isSelected = selectedTodo?.id === todo.id
         const isCompleted = todo.currentCount >= todo.targetCount
+        const isFirst = index === 0
+        const isLast = index === todos.length - 1
 
         return (
           <div
@@ -53,17 +64,48 @@ export default function TodoList({ todos, selectedTodo, onSelectTodo, onDeleteTo
                   Target: {todo.targetCount} | Current: {todo.currentCount}
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onDeleteTodo(todo.id)
-                }}
-                className="text-red-500 hover:text-red-700 hover:bg-red-50 ml-2 p-2 touch-manipulation"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-1">
+                {!isFirst && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onMoveUp(todo.id)
+                    }}
+                    className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-2 touch-manipulation"
+                    title="Move up"
+                  >
+                    <ChevronUp className="w-4 h-4" />
+                  </Button>
+                )}
+                {!isLast && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onMoveDown(todo.id)
+                    }}
+                    className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-2 touch-manipulation"
+                    title="Move down"
+                  >
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDeleteTodo(todo.id)
+                  }}
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 touch-manipulation"
+                  title="Delete"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Progress Bar - Mobile Optimized */}
