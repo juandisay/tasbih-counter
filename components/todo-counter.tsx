@@ -1,17 +1,19 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Minus, Plus } from "lucide-react"
+import { Minus, Plus, Maximize2, Minimize2, X } from "lucide-react"
 import type { Todo } from "@/app/page"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface TodoCounterProps {
   todo: Todo
   onUpdateCount: (id: string, newCount: number) => void
+  onClose?: () => void
 }
 
-export default function TodoCounter({ todo, onUpdateCount }: TodoCounterProps) {
+export default function TodoCounter({ todo, onUpdateCount, onClose }: TodoCounterProps) {
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isFullScreen, setIsFullScreen] = useState(false)
   const progressPercentage = (todo.currentCount / todo.targetCount) * 100
   const isCompleted = todo.currentCount >= todo.targetCount
 
@@ -31,8 +33,38 @@ export default function TodoCounter({ todo, onUpdateCount }: TodoCounterProps) {
     }
   }
 
-  return (
-    <div className="text-center space-y-4 sm:space-y-6">
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen)
+  }
+
+  // Handle escape key to exit full screen
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isFullScreen) {
+        setIsFullScreen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleEscKey)
+    return () => {
+      window.removeEventListener('keydown', handleEscKey)
+    }
+  }, [isFullScreen])
+
+  // Prevent body scrolling when in full screen
+  useEffect(() => {
+    if (isFullScreen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isFullScreen])
+
+  const counterContent = (
+    <div className={`text-center space-y-4 sm:space-y-6 ${isFullScreen ? 'max-w-md mx-auto' : ''}`}>
       {/* Todo Info - Mobile Optimized */}
       <div className="bg-purple-50 rounded-lg p-3 sm:p-4">
         <h3 className="text-lg sm:text-xl font-semibold text-purple-800 mb-1 sm:mb-2 break-words">{todo.name}</h3>
@@ -40,8 +72,8 @@ export default function TodoCounter({ todo, onUpdateCount }: TodoCounterProps) {
       </div>
 
       {/* Progress Circle - Responsive Size */}
-      <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto">
-        <svg className="w-24 h-24 sm:w-32 sm:h-32 transform -rotate-90" viewBox="0 0 120 120">
+      <div className={`relative mx-auto ${isFullScreen ? 'w-40 h-40 sm:w-48 sm:h-48' : 'w-24 h-24 sm:w-32 sm:h-32'}`}>
+        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
           <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" strokeWidth="8" />
           <circle
             cx="60"
@@ -57,7 +89,7 @@ export default function TodoCounter({ todo, onUpdateCount }: TodoCounterProps) {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-lg sm:text-2xl font-bold text-gray-800">
+          <span className={`font-bold text-gray-800 ${isFullScreen ? 'text-3xl sm:text-4xl' : 'text-lg sm:text-2xl'}`}>
             {Math.round(Math.min(progressPercentage, 100))}%
           </span>
         </div>
@@ -69,7 +101,7 @@ export default function TodoCounter({ todo, onUpdateCount }: TodoCounterProps) {
         <div
           className={`text-3xl sm:text-4xl font-bold mb-4 transition-all duration-200 ${
             isUpdating ? "scale-110 text-purple-600" : "text-gray-800"
-          }`}
+          } ${isFullScreen ? 'text-5xl sm:text-6xl' : ''}`}
         >
           {todo.currentCount}
         </div>
@@ -81,12 +113,14 @@ export default function TodoCounter({ todo, onUpdateCount }: TodoCounterProps) {
             disabled={todo.currentCount <= 0 || isUpdating}
             size="lg"
             className={`w-16 h-16 sm:w-14 sm:h-14 rounded-full transition-all duration-200 touch-manipulation ${
+              isFullScreen ? 'sm:w-20 sm:h-20' : ''
+            } ${
               todo.currentCount <= 0
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-red-500 hover:bg-red-600 text-white hover:scale-105 active:scale-95"
             }`}
           >
-            <Minus className="w-6 h-6 sm:w-6 sm:h-6" />
+            <Minus className={`w-6 h-6 sm:w-6 sm:h-6 ${isFullScreen ? 'sm:w-8 sm:h-8' : ''}`} />
           </Button>
 
           <div className="text-center px-2 sm:px-4 min-w-[80px] sm:min-w-[100px]">
@@ -98,9 +132,11 @@ export default function TodoCounter({ todo, onUpdateCount }: TodoCounterProps) {
             onClick={handleIncrease}
             disabled={isUpdating}
             size="lg"
-            className="w-16 h-16 sm:w-14 sm:h-14 rounded-full bg-green-500 hover:bg-green-600 text-white transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation"
+            className={`w-16 h-16 sm:w-14 sm:h-14 rounded-full bg-green-500 hover:bg-green-600 text-white transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation ${
+              isFullScreen ? 'sm:w-20 sm:h-20' : ''
+            }`}
           >
-            <Plus className="w-6 h-6 sm:w-6 sm:h-6" />
+            <Plus className={`w-6 h-6 sm:w-6 sm:h-6 ${isFullScreen ? 'sm:w-8 sm:h-8' : ''}`} />
           </Button>
         </div>
 
@@ -167,6 +203,51 @@ export default function TodoCounter({ todo, onUpdateCount }: TodoCounterProps) {
           )}
         </div>
       )}
+
+      {/* Full Screen Toggle Button */}
+      <div className="flex justify-center mt-2">
+        <Button
+          onClick={toggleFullScreen}
+          variant="ghost"
+          size="sm"
+          className="text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+        >
+          {isFullScreen ? (
+            <>
+              <Minimize2 className="w-4 h-4 mr-1" />
+              Exit Focus Mode
+            </>
+          ) : (
+            <>
+              <Maximize2 className="w-4 h-4 mr-1" />
+              Focus Mode
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   )
+
+  if (isFullScreen) {
+    return (
+      <div className="fixed inset-0 bg-white z-50 overflow-y-auto p-4 sm:p-6 md:p-8 flex flex-col">
+        <div className="flex justify-end mb-2">
+          <Button
+            onClick={toggleFullScreen}
+            variant="ghost"
+            size="sm"
+            className="text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+          >
+            <X className="w-5 h-5 mr-1" />
+            Close Focus Mode
+          </Button>
+        </div>
+        <div className="flex-1 flex flex-col justify-center">
+          {counterContent}
+        </div>
+      </div>
+    )
+  }
+
+  return counterContent
 }

@@ -11,6 +11,7 @@ A modern, responsive web application for tracking and counting tasbih (prayer be
 - Responsive design for mobile and desktop
 - Data persistence using local storage
 - Reorder tasks by moving them up or down one position at a time
+- Focus mode for distraction-free counting
 
 ## Tech Stack
 
@@ -60,6 +61,7 @@ A modern, responsive web application for tracking and counting tasbih (prayer be
 4. **Track progress**: The progress bar and percentage display show your progress toward the target.
 5. **Delete a counter**: Click the delete button next to any counter to remove it.
 6. **Reorder counters**: Use the up arrow to move a counter one position up, or the down arrow to move it one position down.
+7. **Focus mode**: Click the "Focus Mode" button to enter a distraction-free full-screen counting experience. Press ESC or click "Close Focus Mode" to exit.
 
 ## Project Structure
 
